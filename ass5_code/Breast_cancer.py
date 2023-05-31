@@ -91,7 +91,7 @@ rects2 = ax.bar(x_pos + bar_width / 2, ri_list, bar_width, label='RI')
 ax.set_xticks(x_pos)
 ax.set_xticklabels(modelname)
 ax.set_ylabel('得分')
-ax.set_title('不同聚类算法的NMI和RI得分比较')
+ax.set_title('（乳腺癌）不同聚类算法的NMI和RI得分比较')
 ax.legend()
 
 plt.bar_label(rects1)
