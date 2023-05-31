@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans, DBSCAN, SpectralClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.datasets import load_wine
 from sklearn.metrics import normalized_mutual_info_score, silhouette_score, rand_score
+from DPC import DPC
 
 wine = load_wine()
 data = wine.data
@@ -16,6 +17,10 @@ target = wine.target  # 样本中共三类，因此后续选择参数大多为3
 nmi_list = []
 ri_list = []
 modelname = ['Kmeans', 'DBSCAN', 'SpectralClustering', 'EM']
+
+nmi_list = []
+ri_list = []
+modelname = ['Kmeans', 'DBSCAN', 'SpectralClustering', 'EM', 'DPC']
 
 
 class modelsec:
@@ -40,6 +45,10 @@ class modelsec:
             labels = gmm.fit_predict(data)
             silhouette_coefficient = silhouette_score(self.X, labels)
             print("Silhouette Coefficient: ", silhouette_coefficient)
+        elif self.model == 'DPC':
+            labels = dpc.fit(data)
+            silhouette_coefficient = silhouette_score(self.X, labels)
+            print("Silhouette Coefficient: ", silhouette_coefficient)
         nmi = normalized_mutual_info_score(self.y, labels)
         ri = rand_score(self.y, labels)
         nmi_list.append(nmi)
@@ -56,9 +65,11 @@ class modelsec:
 
 # 构建模型、训练模型
 kmeans = KMeans(n_clusters=3, n_init="auto").fit(data)
-DBSCAN = DBSCAN(eps=0.7, min_samples=5).fit(data)
-spectral = SpectralClustering(n_clusters=3, affinity='nearest_neighbors').fit(data)
-gmm = GaussianMixture(n_components=3, random_state=0).fit(data)
+DBSCAN = DBSCAN(eps=0.7, min_samples=5)
+spectral = SpectralClustering(n_clusters=3, affinity='nearest_neighbors')
+gmm = GaussianMixture(n_components=3, random_state=0)
+dpc = DPC(k=3)
+
 # kmeans
 k = modelsec(data, target, 'kmeans')
 k.paint(k.modelselection())
@@ -74,6 +85,10 @@ s.paint(s.modelselection())
 # EM高斯模型
 g = modelsec(data, target, 'gmm')
 g.paint(g.modelselection())
+
+# DPC模型
+dp = modelsec(data, target, 'DPC')
+dp.paint(dp.modelselection())
 
 ############################## 绘图比较 ####################################
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
@@ -92,7 +107,7 @@ rects2 = ax.bar(x_pos + bar_width / 2, ri_list, bar_width, label='RI')
 ax.set_xticks(x_pos)
 ax.set_xticklabels(modelname)
 ax.set_ylabel('得分')
-ax.set_title('(Wine)不同聚类算法的NMI和RI得分比较')
+ax.set_title('（Wine）不同聚类算法的NMI和RI得分比较')
 ax.legend()
 
 plt.bar_label(rects1)

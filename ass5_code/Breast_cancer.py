@@ -7,6 +7,7 @@ from sklearn.cluster import KMeans, DBSCAN, SpectralClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.datasets import load_breast_cancer
 from sklearn.metrics import normalized_mutual_info_score, silhouette_score, rand_score
+from DPC import DPC
 
 breast_cancer = load_breast_cancer()
 data = breast_cancer.data
@@ -14,7 +15,7 @@ target = breast_cancer.target
 
 nmi_list = []
 ri_list = []
-modelname = ['Kmeans','DBSCAN', 'SpectralClustering', 'EM']
+modelname = ['Kmeans', 'DBSCAN', 'SpectralClustering', 'EM','DPC']
 
 
 class modelsec:
@@ -39,6 +40,10 @@ class modelsec:
             labels = gmm.fit_predict(data)
             silhouette_coefficient = silhouette_score(self.X, labels)
             print("Silhouette Coefficient: ", silhouette_coefficient)
+        elif self.model=='DPC':
+            labels = dpc.fit(data)
+            silhouette_coefficient = silhouette_score(self.X, labels)
+            print("Silhouette Coefficient: ", silhouette_coefficient)
         nmi = normalized_mutual_info_score(self.y, labels)
         ri = rand_score(self.y, labels)
         nmi_list.append(nmi)
@@ -55,9 +60,11 @@ class modelsec:
 
 # 构建模型、训练模型
 kmeans = KMeans(n_clusters=2, n_init="auto").fit(data)
-DBSCAN = DBSCAN(eps=0.7, min_samples=5).fit(data)
-spectral = SpectralClustering(n_clusters=2, affinity='nearest_neighbors').fit(data)
-gmm = GaussianMixture(n_components=2, random_state=0).fit(data)
+DBSCAN = DBSCAN(eps=0.7, min_samples=5)
+spectral = SpectralClustering(n_clusters=2, affinity='nearest_neighbors')
+gmm = GaussianMixture(n_components=2, random_state=0)
+dpc = DPC(k=2)
+
 # kmeans
 k = modelsec(data, target, 'kmeans')
 k.paint(k.modelselection())
@@ -73,6 +80,10 @@ s.paint(s.modelselection())
 # EM高斯模型
 g = modelsec(data, target, 'gmm')
 g.paint(g.modelselection())
+
+# DPC模型
+dp = modelsec(data, target, 'DPC')
+dp.paint(dp.modelselection())
 
 ############################## 绘图比较 ####################################
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
