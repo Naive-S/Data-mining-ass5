@@ -32,6 +32,8 @@ class modelsec:
             print("Silhouette Coefficient: ", silhouette_coefficient)
         elif self.model == 'DBSCAN':
             labels = DBSCAN.fit_predict(self.X)
+            silhouette_coefficient = silhouette_score(self.X, labels)
+            print("Silhouette Coefficient: ", silhouette_coefficient)
         elif self.model == 'spectral':
             labels = spectral.fit_predict(self.X)
             silhouette_coefficient = silhouette_score(self.X, labels)
